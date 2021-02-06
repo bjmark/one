@@ -35,14 +35,14 @@ atom one_atom(char *name){
 
     hash_code %= 1024;
 
-    struct element *p = hash_table[hash_code];
-
-    if(p == NULL){
-        p = new_element(name);
-        return p->name;
+    if(hash_table[hash_code] == NULL){
+        hash_table[hash_code] = new_element(name);
+        return hash_table[hash_code]->name;
     }
 
     struct element *prev;
+    struct element *p = hash_table[hash_code];
+
     do{
         if(strcmp(name, p->name) == 0) return p->name;
         prev = p;
