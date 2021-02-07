@@ -25,3 +25,12 @@ one *one_last(one *p){
 		p = p->next;
 	}
 }
+
+one one_empty(){
+	return (one){.next = NULL, .prev = NULL};
+}
+
+one *one_parent(one *p){
+	return one_last(p)->next;
+}
+

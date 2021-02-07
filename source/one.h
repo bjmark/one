@@ -21,3 +21,5 @@ struct one{
 
 one *one_new(int count);
 one *one_last(one *p);
+one one_empty();
+one *one_parent(one *p);

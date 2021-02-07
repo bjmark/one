@@ -44,10 +44,32 @@ void test_one_last(void){
 	assert(one_last(&one1) == &one2);
 }
 
+void test_one_empty(){
+	printf("test_one_empty\n");
+	
+	one one1 = one_empty();
+	assert(one1.next == NULL);
+	assert(one1.prev == NULL);
+}
+
+void test_one_parent(void){
+	printf("test_one_parent\n");
+
+	one one1 = one_empty();
+	assert(one_parent(&one1) == NULL);
+
+	one one2 = one_empty();
+	one1.next = &one2;
+
+	assert(one_parent(&one1) == &one2);
+}
+
 int main(void){
 	printf("start testing...\n");
 	test_one_new();
 	test_one_last();
+	test_one_empty();
+	test_one_parent();
 	printf("test end\n");
 	return 1;
 }
