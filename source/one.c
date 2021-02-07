@@ -18,3 +18,10 @@ one *one_new(int count){
 	return one_p;
 }
 
+one *one_last(one *p){
+	while(1){
+		if(p->next == NULL) return p;
+		if(p->next->prev != p) return p;
+		p = p->next;
+	}
+}

@@ -32,9 +32,22 @@ void test_one_new(void){
 	assert(i == 3);
 }
 
+void test_one_last(void){
+	printf("test_one_last\n");
+
+	one one1 = {.next = NULL, .prev = NULL};
+	assert(one_last(&one1) == &one1);
+
+	one one2 = {.next = NULL, .prev = &one1};
+	one1.next = &one2;
+	
+	assert(one_last(&one1) == &one2);
+}
+
 int main(void){
 	printf("start testing...\n");
 	test_one_new();
+	test_one_last();
 	printf("test end\n");
 	return 1;
 }

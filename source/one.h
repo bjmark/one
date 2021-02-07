@@ -20,3 +20,4 @@ struct one{
 };
 
 one *one_new(int count);
+one *one_last(one *p);
