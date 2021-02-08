@@ -23,3 +23,7 @@ one *one_new(int count);
 one *one_last(one *p);
 one one_empty();
 one *one_parent(one *p);
+
+one *one_find(one *one_p, atom name, atom type);
+one *one_find_0(one *one_p, atom name);
+

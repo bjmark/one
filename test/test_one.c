@@ -64,12 +64,29 @@ void test_one_parent(void){
 	assert(one_parent(&one1) == &one2);
 }
 
+void test_one_find(void){
+	printf("test_one_find\n");
+
+	one one1 = one_empty();
+	one1.name = one_atom("abc");
+	one1.type = one_atom("char_p");
+
+	assert(one_find(&one1, "abc", "char_p") != NULL);
+
+	one one2 = one_empty();
+	one2.name = one_atom("efg");
+	one1.next = &one2;
+
+	assert(one_find(&one1, "efg", "char_p") == NULL);
+}
+
 int main(void){
 	printf("start testing...\n");
 	test_one_new();
 	test_one_last();
 	test_one_empty();
 	test_one_parent();
+	test_one_find();
 	printf("test end\n");
 	return 1;
 }

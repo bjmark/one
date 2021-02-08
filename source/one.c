@@ -27,10 +27,35 @@ one *one_last(one *p){
 }
 
 one one_empty(){
-	return (one){.next = NULL, .prev = NULL};
+	return (one){.next = NULL, .prev = NULL, .name = NULL, .type = NULL};
 }
 
 one *one_parent(one *p){
 	return one_last(p)->next;
 }
+
+one *one_find(one *one_p, char *name, char *type){
+	atom name2 = one_atom(name);
+	atom type2 = one_atom(type);
+	do{
+		if(one_p->name == name2 && one_p->type == type2)
+			return one_p;
+
+		one_p = one_p->next;
+	}while(one_p != NULL);
+
+	return one_p;
+}
+
+one *one_find_0(one *one_p, atom name){
+	do{
+		if(one_p->name == name)
+			return one_p;
+
+		one_p = one_p->next;
+	}while(one_p != NULL);
+
+	return one_p;
+}
+
 
