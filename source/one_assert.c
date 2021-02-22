@@ -30,7 +30,6 @@ static void fail0(char *file, int line, const char *func, char *exp){
 	retval->exp = strdup(exp);
 
 	pthread_exit(retval);
-	//printf("%s: %d: %s: `one_assert(%s)` failed\n", file, line, func, exp);
 }
 
 static one_fail_func func = fail0;
@@ -90,7 +89,7 @@ void one_test_success(void (*func)(void)){
 		
 		free(retval);
 	}else{
-		printf("%s: %d: %s: `one_assert(%s)` failed\n", retval->file, retval->line, retval->func, retval->exp);
+		printf("%s: %d: %s: `one_assert(%s)` failed\n\n", retval->file, retval->line, retval->func, retval->exp);
 		
 		free(retval->file);
 		free(retval->func);
@@ -104,12 +103,14 @@ void one_test_fail(void (*func)(void)){
 
 	if(retval->success == 'n'){
 		printf("success\n\n");
+		
+		free(retval->file);
+		free(retval->func);
+		free(retval->exp);
+		free(retval);
 	}else{
-		printf("fail\n");
+		printf("fail\n\n");
+		free(retval);
 	}
 
-	free(retval->file);
-	free(retval->func);
-	free(retval->exp);
-	free(retval);
 }
