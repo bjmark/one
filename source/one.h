@@ -32,3 +32,5 @@ one *one_find(one *one_p, atom name, atom type);
 one *one_find_0(one *one_p, atom name);
 
 one one_call(one *one_p, char *name, one arg);
+
+one *one_attach(one *one1_p, one *one2_p);

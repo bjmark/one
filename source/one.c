@@ -69,9 +69,8 @@ one one_call(one *one_p, char *name, one arg){
 	return one1_p->method(one_p, arg);
 }
 
-one *attach(one *one1_p, one *one2_p){
+one *one_attach(one *one1_p, one *one2_p){
 	one *last = one_last(one1_p);
-	assert(last->next == NULL);
 	last->next = one2_p;
 	
 	return one1_p;

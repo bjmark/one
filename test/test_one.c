@@ -1,5 +1,5 @@
-#include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "../source/one.h"
 #include "../source/one_assert.h"
 
@@ -10,6 +10,7 @@ void test_one_new(void){
 	one_assert(one_p != NULL);
 	one_assert(one_p->prev == NULL);
 	one_assert(one_p->next == NULL);
+	free(one_p);
 
 	one_p = one_new(3);
 
@@ -31,6 +32,8 @@ void test_one_new(void){
 	}
 
 	one_assert(i == 3);
+
+	free(one_p);
 }
 
 void test_one_last(void){
@@ -99,6 +102,16 @@ void test_one_call(void){
 	one_assert(one_call(&one1, "fun", arg1)._int == 1);
 }
 
+void test_one_attach(void){
+	printf("test_one_attach\n");
+
+	one one1 = one_empty();
+	one one2 = one_empty();
+
+	one_attach(&one1, &one2);
+	one_assert(one_last(&one1)->next == &one2);
+}
+
 int main(void){
 	printf("start testing...\n\n");
 	
@@ -119,6 +132,9 @@ int main(void){
 
 	//test_one_call();
 	one_test_success(test_one_call);
+
+	//test_one_attach();
+	one_test_success(test_one_attach);
 
 	printf("test end\n");
 	return 1;
