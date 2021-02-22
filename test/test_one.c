@@ -80,13 +80,34 @@ void test_one_find(void){
 	assert(one_find(&one1, "efg", "char_p") == NULL);
 }
 
+one one_fun(one *self, one arg){
+	return arg;
+}
+
+void test_one_call(void){
+	printf("test_one_call\n");
+
+	one one1 = one_empty();
+	
+	one1.name = one_atom("fun");
+	one1.type = one_atom("method");
+	one1.method = one_fun;
+
+	one arg1 = {._int = 1};
+
+	assert(one_call(&one1, "fun", arg1)._int == 1);
+}
+
 int main(void){
 	printf("start testing...\n");
+	
 	test_one_new();
 	test_one_last();
 	test_one_empty();
 	test_one_parent();
 	test_one_find();
+	test_one_call();
+
 	printf("test end\n");
 	return 1;
 }

@@ -1,5 +1,9 @@
+#include <assert.h>
 #include <stdlib.h>
 #include "one.h"
+
+one one_error(){
+}
 
 one *one_new(int count){
 	one *one_p = malloc(sizeof(one) * count);
@@ -58,4 +62,22 @@ one *one_find_0(one *one_p, atom name){
 	return one_p;
 }
 
+
+one one_call(one *one_p, char *name, one arg){
+	one *one1_p = one_find(one_p, name, "method");
+	assert(one1_p != NULL);
+	return one1_p->method(one_p, arg);
+}
+
+one *attach(one *one1_p, one *one2_p){
+	one *last = one_last(one1_p);
+	assert(last->next == NULL);
+	last->next = one2_p;
+	
+	return one1_p;
+}
+
+one *detach(one *one_p){
+	return one_p;
+}
 
