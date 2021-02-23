@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include "one.h"
 
-one one_error(){
-}
+//one one_error(){
+//}
 
 one *one_new(int count){
 	one *one_p = malloc(sizeof(one) * count);
@@ -13,9 +13,15 @@ one *one_new(int count){
 	int last = count - 1;
 
 	for(int i = 0; i < last; i++){
+		one_p[i].name = NULL;
+		one_p[i].type = NULL;
+
 		one_p[i].next = one_p + i + 1;
 		one_p[i + 1].prev = one_p + i;
 	}
+
+	one_p[last].name = NULL;
+	one_p[last].type = NULL;
 
 	one_p[last].next = NULL;
 	
@@ -51,9 +57,10 @@ one *one_find(one *one_p, char *name, char *type){
 	return one_p;
 }
 
-one *one_find_0(one *one_p, atom name){
+one *one_find_0(one *one_p, char *name){
+	atom name2 = one_atom(name);
 	do{
-		if(one_p->name == name)
+		if(one_p->name == name2)
 			return one_p;
 
 		one_p = one_p->next;
@@ -76,7 +83,10 @@ one *one_attach(one *one1_p, one *one2_p){
 	return one1_p;
 }
 
-one *detach(one *one_p){
+one *one_detach(one *one_p){
+	one *last = one_last(one_p);
+	last->next = NULL;
+
 	return one_p;
 }
 

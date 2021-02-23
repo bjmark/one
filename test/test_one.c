@@ -46,6 +46,9 @@ void test_one_last(void){
 	one1.next = &one2;
 	
 	one_assert(one_last(&one1) == &one2);
+
+	one2.prev = NULL;
+	one_assert(one_last(&one1) == &one1);
 }
 
 void test_one_empty(){
@@ -54,6 +57,8 @@ void test_one_empty(){
 	one one1 = one_empty();
 	one_assert(one1.next == NULL);
 	one_assert(one1.prev == NULL);
+	one_assert(one1.name == NULL);
+	one_assert(one1.type == NULL);
 }
 
 void test_one_parent(void){
@@ -84,6 +89,22 @@ void test_one_find(void){
 	one_assert(one_find(&one1, "efg", "char_p") == NULL);
 }
 
+void test_one_find_0(void){
+	printf("test_one_find_0\n");
+
+	one one1 = one_empty();
+	one1.name = one_atom("abc");
+
+	one_assert(one_find_0(&one1, "abc") != NULL);
+
+	one one2 = one_empty();
+	one2.name = one_atom("efg");
+	one1.next = &one2;
+
+	one_assert(one_find_0(&one1, "efg") != NULL);
+	one_assert(one_find_0(&one1, "efgh") == NULL);
+}
+
 one one_fun(one *self, one arg){
 	return arg;
 }
@@ -109,7 +130,20 @@ void test_one_attach(void){
 	one one2 = one_empty();
 
 	one_attach(&one1, &one2);
-	one_assert(one_last(&one1)->next == &one2);
+	one_assert(one_parent(&one1) == &one2);
+}
+
+void test_one_detach(void){
+	printf("test_one_detach\n");
+
+	one one1 = one_empty();
+	one one2 = one_empty();
+
+	one_attach(&one1, &one2);
+	one_assert(one_parent(&one1) == &one2);
+
+	one_detach(&one1);
+	one_assert(one_parent(&one1) == NULL);
 }
 
 int main(void){
@@ -130,11 +164,17 @@ int main(void){
 	//test_one_find();
 	one_test_success(test_one_find);
 
+	//test_one_find_0()
+	one_test_success(test_one_find_0);
+
 	//test_one_call();
 	one_test_success(test_one_call);
 
 	//test_one_attach();
 	one_test_success(test_one_attach);
+
+	//test_one_detach();
+	one_test_success(test_one_detach);
 
 	printf("test end\n");
 	return 1;
