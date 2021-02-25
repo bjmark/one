@@ -36,6 +36,17 @@ void test_one_new(void){
 	free(one_p);
 }
 
+void test_one_first(void){
+	printf("test_one_first\n");
+
+	one *first, *p = one_new(3);
+	
+	first = p;
+	one_assert(one_first(p) == first);
+
+	one_assert(one_first(one_last(p)) == first);
+}
+
 void test_one_last(void){
 	printf("test_one_last\n");
 
@@ -89,20 +100,20 @@ void test_one_find(void){
 	one_assert(one_find(&one1, "efg", "char_p") == NULL);
 }
 
-void test_one_find_0(void){
+void test_one_find_by_name(void){
 	printf("test_one_find_0\n");
 
 	one one1 = one_empty();
 	one1.name = one_atom("abc");
 
-	one_assert(one_find_0(&one1, "abc") != NULL);
+	one_assert(one_find_by_name(&one1, "abc") != NULL);
 
 	one one2 = one_empty();
 	one2.name = one_atom("efg");
 	one1.next = &one2;
 
-	one_assert(one_find_0(&one1, "efg") != NULL);
-	one_assert(one_find_0(&one1, "efgh") == NULL);
+	one_assert(one_find_by_name(&one1, "efg") != NULL);
+	one_assert(one_find_by_name(&one1, "efgh") == NULL);
 }
 
 one one_fun(one *self, one arg){
@@ -118,9 +129,9 @@ void test_one_call(void){
 	one1.type = one_atom("method");
 	one1.method = one_fun;
 
-	one arg1 = {._int = 1};
+	one arg1 = {.c_int = 1};
 
-	one_assert(one_call(&one1, "fun", arg1)._int == 1);
+	one_assert(one_call(&one1, "fun", arg1).c_int == 1);
 }
 
 void test_one_attach(void){
@@ -146,11 +157,25 @@ void test_one_detach(void){
 	one_assert(one_parent(&one1) == NULL);
 }
 
+void test_one_join(void){
+	printf("test_one_join\n");
+
+	one *one1_p = one_new(2);
+	one *one2_p = one_new(3);
+
+	one_join(one1_p, one2_p);
+
+	one_assert(one_last(one1_p) == one_last(one2_p));
+}
+
 int main(void){
 	printf("start testing...\n\n");
 	
 	//test_one_new();
 	one_test_success(test_one_new);
+
+	//test_one_first();
+	one_test_success(test_one_first);
 
 	//test_one_last();
 	one_test_success(test_one_last);
@@ -165,7 +190,7 @@ int main(void){
 	one_test_success(test_one_find);
 
 	//test_one_find_0()
-	one_test_success(test_one_find_0);
+	one_test_success(test_one_find_by_name);
 
 	//test_one_call();
 	one_test_success(test_one_call);
@@ -175,6 +200,9 @@ int main(void){
 
 	//test_one_detach();
 	one_test_success(test_one_detach);
+
+    //test_one_join()
+	one_test_success(test_one_join);
 
 	printf("test end\n");
 	return 1;

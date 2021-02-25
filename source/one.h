@@ -11,7 +11,7 @@ struct one{
 	atom type;
 	
 	union{
-		int _int;
+		int c_int;
 		char *char_p;
 		void *void_p;
 		one *one_p;
@@ -24,15 +24,22 @@ struct one{
 
 
 one *one_new(int count);
+
+one *one_first(one *p);
 one *one_last(one *p);
+
 one one_empty();
 one *one_parent(one *p);
 
-one *one_find(one *one_p, char *name, char *type);
-one *one_find_0(one *one_p, char *name);
+one *one_find(one *p, char *name, char *type);
+one *one_find_by_name(one *p, char *name);
 
-one one_call(one *one_p, char *name, one arg);
+one one_call(one *p, char *name, one arg);
 
-one *one_attach(one *one1_p, one *one2_p);
+one *one_attach(one *p1, one *p2);
 
-one *one_detach(one *one_p);
+one *one_detach(one *p);
+
+one *one_join(one *p1, one *p2);
+
+one *one_string(void);

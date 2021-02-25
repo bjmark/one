@@ -2,30 +2,34 @@
 #include <stdlib.h>
 #include "one.h"
 
-//one one_error(){
-//}
-
 one *one_new(int count){
-	one *one_p = malloc(sizeof(one) * count);
+	one *p = malloc(sizeof(one) * count);
 	
-	one_p->prev = NULL;
+	p->prev = NULL;
 	
 	int last = count - 1;
 
 	for(int i = 0; i < last; i++){
-		one_p[i].name = NULL;
-		one_p[i].type = NULL;
+		p[i].name = NULL;
+		p[i].type = NULL;
 
-		one_p[i].next = one_p + i + 1;
-		one_p[i + 1].prev = one_p + i;
+		p[i].next = p + i + 1;
+		p[i + 1].prev = p + i;
 	}
 
-	one_p[last].name = NULL;
-	one_p[last].type = NULL;
+	p[last].name = NULL;
+	p[last].type = NULL;
 
-	one_p[last].next = NULL;
+	p[last].next = NULL;
 	
-	return one_p;
+	return p;
+}
+
+one *one_first(one *p){
+	while(1){
+		if(p->prev == NULL) return p;
+		p = p->prev;
+	}
 }
 
 one *one_last(one *p){
@@ -44,36 +48,34 @@ one *one_parent(one *p){
 	return one_last(p)->next;
 }
 
-one *one_find(one *one_p, char *name, char *type){
+one *one_find(one *p, char *name, char *type){
 	atom name2 = one_atom(name);
 	atom type2 = one_atom(type);
 	do{
-		if(one_p->name == name2 && one_p->type == type2)
-			return one_p;
+		if(p->name == name2 && p->type == type2)
+			return p;
 
-		one_p = one_p->next;
-	}while(one_p != NULL);
+		p = p->next;
+	}while(p != NULL);
 
-	return one_p;
+	return p;
 }
 
-one *one_find_0(one *one_p, char *name){
+one *one_find_by_name(one *p, char *name){
 	atom name2 = one_atom(name);
 	do{
-		if(one_p->name == name2)
-			return one_p;
+		if(p->name == name2)
+			return p;
 
-		one_p = one_p->next;
-	}while(one_p != NULL);
+		p = p->next;
+	}while(p != NULL);
 
-	return one_p;
+	return p;
 }
 
 
-one one_call(one *one_p, char *name, one arg){
-	one *one1_p = one_find(one_p, name, "method");
-	assert(one1_p != NULL);
-	return one1_p->method(one_p, arg);
+one one_call(one *p, char *name, one arg){
+	return one_find(p, name, "method")->method(p, arg);
 }
 
 one *one_attach(one *one1_p, one *one2_p){
@@ -88,5 +90,14 @@ one *one_detach(one *one_p){
 	last->next = NULL;
 
 	return one_p;
+}
+
+one *one_join(one *one1_p, one *one2_p){
+	one *last = one_last(one1_p);
+
+	last->next = one2_p;
+	one2_p->prev = last;
+
+	return one1_p;
 }
 
