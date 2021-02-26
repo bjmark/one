@@ -9,21 +9,15 @@ static one one_string_new(one *self, one arg){
 	p->type = one_atom("char_p");
 	p->char_p = NULL;
 
-	p->next = one_new(1);
-	p->next->prev = p;
-	
-	p = p->next;
-	p->name = one_atom("@len");
-	p->type = one_atom("int");
-	p->c_int = 0;
+	one_join(p, one_new(1));
+	p = one_last(p);
 
-	p->next = one_new(1);
-	p->next->prev = p;
-
-	p = p->next;
 	p->name = one_atom("@space");
 	p->type = one_atom("int");
 	p->c_int = 0;
+	
+	one_join(p, one_new(1));
+	p = one_last(p);
 
 	one_attach(p, self);
 
@@ -32,7 +26,7 @@ static one one_string_new(one *self, one arg){
 
 static one one_string_assign(one *self, one arg){
 	int len = strlen(arg.char_p);
-	int unit = 1024;
+	int unit = one_find_by_name(self, "@space_unit")->c_int;
 	
 	int new_space = (len / unit + 1) * 1024;
 
@@ -46,7 +40,6 @@ static one one_string_assign(one *self, one arg){
 	}
 	
 	strcpy(attr_str->char_p, arg.char_p);
-	one_find_by_name(self, "@len")->c_int = len;
 
 	return *self;
 }
@@ -63,6 +56,10 @@ static one one_string_equal(one *self, one arg){
 	return (one){.c_int = i};
 }
 
+static one one_string_append(one *self, one arg){
+	return *self;
+}
+
 one *one_string(void){
 	static one *string = NULL;
 	
@@ -74,21 +71,26 @@ one *one_string(void){
 	p->type = one_atom("method");
 	p->method = one_string_new; 
 
-	p->next = one_new(1);
-	p->next->prev = p;
-	p = p->next;
+	one_join(p, one_new(1));
+	p = one_last(p);
 
 	p->name = one_atom("=");
 	p->type = one_atom("method");
 	p->method = one_string_assign;
 
-	p->next = one_new(1);
-	p->next->prev = p;
-	p = p->next;
+	one_join(p, one_new(1));
+	p = one_last(p);
 
 	p->name = one_atom("==");
 	p->type = one_atom("method");
 	p->method = one_string_equal;
+
+	one_join(p, one_new(1));
+	p = one_last(p);
+
+	p->name = one_atom("@space_unit");
+	p->type = one_atom("int");
+	p->c_int = 1024;
 
 	string = one_first(p);
 	return string;
