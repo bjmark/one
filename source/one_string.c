@@ -35,8 +35,12 @@ static one one_string_respace(one *self, one arg){
 	one *attr_str = one_find_by_name(self, "@str");
 
 	if(new_space > attr_space->c_int){
+		char *p = malloc(new_space);
+		
+		if(attr_str->char_p != NULL) strcpy(p, attr_str->char_p);
 		if(attr_space->c_int > 0) free(attr_str->char_p);
-		attr_str->char_p = malloc(new_space);
+		
+		attr_str->char_p = p;
 		attr_space->c_int = new_space;
 	}
 
@@ -46,38 +50,28 @@ static one one_string_respace(one *self, one arg){
 static one one_string_assign(one *self, one arg){
 	char *str = one_call(self, "str", arg).char_p;
 
-	int len = strlen(str);
-	int unit = one_find_by_name(self, "@space_unit")->c_int;
-	
-	int new_space = (len / unit + 1) * unit;
-
-	one *attr_space = one_find_by_name(self, "@space");
-	one *attr_str = one_find_by_name(self, "@str");
-
-	if(new_space > attr_space->c_int){
-		if(attr_space->c_int > 0) free(attr_str->char_p);
-		attr_str->char_p = malloc(new_space);
-		attr_space->c_int = new_space;
-	}
-	
-	strcpy(attr_str->char_p, str);
+	one_call(self, "respace", (one){.c_int = strlen(str)});
+	strcpy(one_find_by_name(self, "@str")->char_p, str);
 
 	return *self;
 }
 
 static one one_string_cmp(one *self, one arg){
-	one *p = one_find_by_name(&arg, "@str");
-	
-	char *str = (p == NULL ? NULL : p->char_p);
-	
-	if(str == NULL) str = arg.char_p;
-
+	char *str = one_call(self, "str", arg).char_p;
 	int i = strcmp(one_find_by_name(self, "@str")->char_p, str);
 	
 	return (one){.c_int = i};
 }
 
 static one one_string_append(one *self, one arg){
+	char *str = one_call(self, "str", arg).char_p;
+	one *attr_str = one_find_by_name(self, "@str");
+
+	int self_len = strlen(attr_str->char_p);
+	one_call(self, "respace", (one){.c_int = strlen(str) + self_len});
+
+	strcpy(attr_str->char_p + self_len, str);
+	
 	return *self;
 }
 
@@ -151,6 +145,13 @@ one *one_string(void){
 	p->name = one_atom("respace");
 	p->type = one_atom("method");
 	p->method = one_string_respace;
+
+	one_join(p, one_new(1));
+	p = one_last(p);
+
+	p->name = one_atom("<<");
+	p->type = one_atom("method");
+	p->method = one_string_append;
 
 	string = one_first(p);
 	return string;

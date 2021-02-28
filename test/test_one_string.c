@@ -14,6 +14,7 @@ void test_one_string(void){
 	one_assert(one_find(string, "name", "method")!= NULL);
 	one_assert(one_find(string, "str", "method")!= NULL);
 	one_assert(one_find(string, "respace", "method")!= NULL);
+	one_assert(one_find(string, "<<", "method")!= NULL);
 }
 
 void test_one_string_new(void){
@@ -41,9 +42,13 @@ void test_one_string_respace(void){
 
 	one_call(p, "respace", (one){.c_int = 1000});
 	one_assert(one_find_by_name(p, "@space")->c_int == 1024); 
-	
+
+	one_call(p, "=", (one){.char_p = "abc"});
+
 	one_call(p, "respace", (one){.c_int = 1024});
-	one_assert(one_find_by_name(p, "@space")->c_int == 2048); 
+	one_assert(one_find_by_name(p, "@space")->c_int == 2048);
+
+	one_assert(one_call(p, "==", (one){.char_p = "abc"}).c_int == 0);
 }
 
 void test_one_string_assign(void){
@@ -93,6 +98,17 @@ void test_one_string_str(void){
 	one_assert(one_call(str, "str", str2).char_p == str2.char_p);
 }
 
+void test_one_string_append(void){
+	printf("test_one_string_append\n");
+	
+	one *str = one_call(one_string(), "new", one_empty()).one_p;
+
+	one_call(str, "=", (one){.char_p = "abc"});
+	one_call(str, "<<", (one){.char_p = "123"});
+
+	one_assert(one_call(str, "==", (one){.char_p = "abc123"}).c_int == 0);
+}
+
 int main(void){
 	printf("start testing...\n\n");
 
@@ -103,6 +119,7 @@ int main(void){
 	one_test_success(test_one_string_respace);
 	one_test_success(test_one_string_assign);
 	one_test_success(test_one_string_str);
+	one_test_success(test_one_string_append);
 
 	printf("test end\n");
 
