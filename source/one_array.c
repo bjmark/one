@@ -63,6 +63,25 @@ one one_array_respace(one *self, one arg){
 	return *self;
 }
 
+one one_array_append(one *self, one arg){
+	one *len = one_find_by_name(self, "@len");
+
+	one_call(self, "respace", (one){.c_int = len->c_int + 1});
+	
+	one *col = one_find_by_name(self, "@col");
+	
+	int row2 = len->c_int / col->c_int;
+	int col2 = len->c_int % col->c_int;
+
+	one *first_row = one_find_by_name(self, "@first_row");
+	one ***p = first_row->void_p;
+	p[row2][col2] = arg.one_p;
+
+	len->c_int++;
+
+	return *self;
+}
+
 one *one_array(void){
 	static one *array = NULL;
 
@@ -87,6 +106,13 @@ one *one_array(void){
 	p->name = one_atom("respace");
 	p->type = one_atom("method");
 	p->method = one_array_respace; 
+
+	one_join(p, one_new(1));
+	p = one_last(p);
+
+	p->name = one_atom("<<");
+	p->type = one_atom("method");
+	p->method = one_array_append; 
 
 	array = one_first(p);
 	return array;

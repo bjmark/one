@@ -10,6 +10,7 @@ void test_one_array(void){
 	one_assert(one_find(p, "new", "method") != NULL);
 	one_assert(one_find(p, "@col", "int") != NULL);
 	one_assert(one_find(p, "respace", "method") != NULL);
+	one_assert(one_find(p, "<<", "method") != NULL);
 }
 
 void test_one_array_new(void){
@@ -46,12 +47,46 @@ void test_one_array_respace(void){
 	p3[1][1] = p2;
 }
 
+void test_one_array_append(void){
+	printf("test_one_array_append\n");
+
+	one *p = one_call(one_array(), "new", one_empty()).one_p;
+	
+	one one1;
+	one_call(p, "<<", (one){.one_p = &one1});
+
+	one ***p2 = one_find_by_name(p, "@first_row")->void_p;
+
+	one_assert(p2[0][0] == &one1);
+	
+	one one2;
+	one_call(p, "<<", (one){.one_p = &one2});
+
+	one_assert(p2[0][1] == &one2);
+
+	one *p3;
+
+	for(int i = 0; i < 128; i++){
+		p3 = one_new(1);
+		p3->c_int = i;
+		one_call(p, "<<", (one){.one_p = p3});
+
+	}
+
+	p2 = one_find_by_name(p, "@first_row")->void_p;
+	
+	one_assert(p2[1][0]->c_int == 126);
+	one_assert(p2[1][1]->c_int == 127);
+
+}
+
 int main(void){
 	printf("start testing...\n\n");
 	
 	one_test_success(test_one_array);
 	one_test_success(test_one_array_new);
 	one_test_success(test_one_array_respace);
+	one_test_success(test_one_array_append);
 
 	printf("test end\n");
 	return 1;
