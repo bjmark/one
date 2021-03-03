@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "one.h"
+#include "one_assert.h"
 
 static one one_array_new(one *self, one arg){
 	one *p = one_new(1);
@@ -82,6 +83,22 @@ one one_array_append(one *self, one arg){
 	return *self;
 }
 
+one one_array_index(one *self, one arg){
+	one *len = one_find_by_name(self, "@len");
+	
+	one_assert(arg.c_int < len->c_int);
+	one_assert(arg.c_int >= 0);
+
+	one *col = one_find_by_name(self, "@col");
+	int row2 = arg.c_int / col->c_int;
+	int col2 = arg.c_int % col->c_int;
+	
+	one *first_row = one_find_by_name(self, "@first_row");
+	one ***p = first_row->void_p;
+
+	return (one){.one_p = p[row2][col2]};
+}
+
 one *one_array(void){
 	static one *array = NULL;
 
@@ -114,6 +131,13 @@ one *one_array(void){
 	p->type = one_atom("method");
 	p->method = one_array_append; 
 
+	one_join(p, one_new(1));
+	p = one_last(p);
+
+	p->name = one_atom("[]");
+	p->type = one_atom("method");
+	p->method = one_array_index; 
+	
 	array = one_first(p);
 	return array;
 }

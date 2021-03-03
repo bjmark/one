@@ -11,6 +11,7 @@ void test_one_array(void){
 	one_assert(one_find(p, "@col", "int") != NULL);
 	one_assert(one_find(p, "respace", "method") != NULL);
 	one_assert(one_find(p, "<<", "method") != NULL);
+	one_assert(one_find(p, "[]", "method") != NULL);
 }
 
 void test_one_array_new(void){
@@ -80,6 +81,32 @@ void test_one_array_append(void){
 
 }
 
+void test_one_array_index(void){
+	printf("test_one_array_index\n");
+
+	one *p = one_call(one_array(), "new", one_empty()).one_p;
+
+	one one1;
+
+	one_call(p, "<<", (one){.one_p = &one1});
+
+	one_assert(one_call(p, "[]", (one){.c_int = 0}).one_p == &one1);
+}
+
+void test_one_array_index2(void){
+	printf("test_one_array_index2\n");
+	
+	one *p = one_call(one_array(), "new", one_empty()).one_p;
+	one_call(p, "[]", (one){.c_int = 1});
+}
+
+void test_one_array_index3(void){
+	printf("test_one_array_index3\n");
+	
+	one *p = one_call(one_array(), "new", one_empty()).one_p;
+	one_call(p, "[]", (one){.c_int = -1});
+}
+
 int main(void){
 	printf("start testing...\n\n");
 	
@@ -87,6 +114,10 @@ int main(void){
 	one_test_success(test_one_array_new);
 	one_test_success(test_one_array_respace);
 	one_test_success(test_one_array_append);
+
+	one_test_success(test_one_array_index);
+	one_test_fail(test_one_array_index2);
+	one_test_fail(test_one_array_index3);
 
 	printf("test end\n");
 	return 1;
