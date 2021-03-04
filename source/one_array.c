@@ -64,7 +64,7 @@ one one_array_respace(one *self, one arg){
 	return *self;
 }
 
-one one_array_append(one *self, one arg){
+one one_array_push(one *self, one arg){
 	one *len = one_find_by_name(self, "@len");
 
 	one_call(self, "respace", (one){.c_int = len->c_int + 1});
@@ -81,6 +81,18 @@ one one_array_append(one *self, one arg){
 	len->c_int++;
 
 	return *self;
+}
+
+one one_array_pop(one *self, one arg){
+	one *len = one_find_by_name(self, "@len");
+
+	one_assert(len->c_int > 0);
+	
+	one one1 = one_call(self, "[]", (one){.c_int = len->c_int - 1});
+
+	len->c_int--;
+
+	return one1;
 }
 
 one one_array_index(one *self, one arg){
@@ -129,7 +141,14 @@ one *one_array(void){
 
 	p->name = one_atom("<<");
 	p->type = one_atom("method");
-	p->method = one_array_append; 
+	p->method = one_array_push; 
+
+	one_join(p, one_new(1));
+	p = one_last(p);
+
+	p->name = one_atom("push");
+	p->type = one_atom("method");
+	p->method = one_array_push; 
 
 	one_join(p, one_new(1));
 	p = one_last(p);
@@ -138,6 +157,13 @@ one *one_array(void){
 	p->type = one_atom("method");
 	p->method = one_array_index; 
 	
+	one_join(p, one_new(1));
+	p = one_last(p);
+
+	p->name = one_atom("pop");
+	p->type = one_atom("method");
+	p->method = one_array_pop; 
+
 	array = one_first(p);
 	return array;
 }

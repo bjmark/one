@@ -11,7 +11,9 @@ void test_one_array(void){
 	one_assert(one_find(p, "@col", "int") != NULL);
 	one_assert(one_find(p, "respace", "method") != NULL);
 	one_assert(one_find(p, "<<", "method") != NULL);
+	one_assert(one_find(p, "push", "method") != NULL);
 	one_assert(one_find(p, "[]", "method") != NULL);
+	one_assert(one_find(p, "pop", "method") != NULL);
 }
 
 void test_one_array_new(void){
@@ -48,8 +50,8 @@ void test_one_array_respace(void){
 	p3[1][1] = p2;
 }
 
-void test_one_array_append(void){
-	printf("test_one_array_append\n");
+void test_one_array_push(void){
+	printf("test_one_array_push\n");
 
 	one *p = one_call(one_array(), "new", one_empty()).one_p;
 	
@@ -107,17 +109,44 @@ void test_one_array_index3(void){
 	one_call(p, "[]", (one){.c_int = -1});
 }
 
+void test_one_array_pop(void){
+	printf("test_one_array_pop\n");
+
+	one *p = one_call(one_array(), "new", one_empty()).one_p;
+	
+	one one1, one2;
+	
+	one_call(p, "push", (one){.one_p = &one1});
+	one_call(p, "push", (one){.one_p = &one2});
+
+	one_assert(one_call(p, "pop", one_empty()).one_p == &one2);
+	one_assert(one_find_by_name(p, "@len")->c_int == 1);
+	
+	one_assert(one_call(p, "pop", one_empty()).one_p == &one1);
+	one_assert(one_find_by_name(p, "@len")->c_int == 0);
+}
+
+void test_one_array_pop2(void){
+	printf("test_one_array_pop2\n");
+	
+	one *p = one_call(one_array(), "new", one_empty()).one_p;
+	one_call(p, "pop", one_empty());
+}
+
 int main(void){
 	printf("start testing...\n\n");
 	
 	one_test_success(test_one_array);
 	one_test_success(test_one_array_new);
 	one_test_success(test_one_array_respace);
-	one_test_success(test_one_array_append);
+	one_test_success(test_one_array_push);
 
 	one_test_success(test_one_array_index);
 	one_test_fail(test_one_array_index2);
 	one_test_fail(test_one_array_index3);
+
+	one_test_success(test_one_array_pop);
+	one_test_fail(test_one_array_pop2);
 
 	printf("test end\n");
 	return 1;
