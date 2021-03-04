@@ -14,6 +14,7 @@ void test_one_array(void){
 	one_assert(one_find(p, "push", "method") != NULL);
 	one_assert(one_find(p, "[]", "method") != NULL);
 	one_assert(one_find(p, "pop", "method") != NULL);
+	one_assert(one_find(p, "len", "method") != NULL);
 }
 
 void test_one_array_new(void){
@@ -133,6 +134,18 @@ void test_one_array_pop2(void){
 	one_call(p, "pop", one_empty());
 }
 
+void test_one_array_len(void){
+	printf("test_one_array_len\n");
+	
+	one *p = one_call(one_array(), "new", one_empty()).one_p;
+	one_assert(one_call(p, "len", one_empty()).c_int == 0);
+
+	one one1;
+	one_call(p, "<<", (one){.one_p = &one1});
+	
+	one_assert(one_call(p, "len", one_empty()).c_int == 1);
+}
+
 int main(void){
 	printf("start testing...\n\n");
 	
@@ -147,6 +160,8 @@ int main(void){
 
 	one_test_success(test_one_array_pop);
 	one_test_fail(test_one_array_pop2);
+
+	one_test_success(test_one_array_len);
 
 	printf("test end\n");
 	return 1;

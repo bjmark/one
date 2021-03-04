@@ -111,6 +111,12 @@ one one_array_index(one *self, one arg){
 	return (one){.one_p = p[row2][col2]};
 }
 
+one one_array_len(one *self, one arg){
+	one *len = one_find_by_name(self, "@len");
+	
+	return (one){.c_int = len->c_int}; 
+}
+
 one *one_array(void){
 	static one *array = NULL;
 
@@ -163,6 +169,13 @@ one *one_array(void){
 	p->name = one_atom("pop");
 	p->type = one_atom("method");
 	p->method = one_array_pop; 
+
+	one_join(p, one_new(1));
+	p = one_last(p);
+
+	p->name = one_atom("len");
+	p->type = one_atom("method");
+	p->method = one_array_len; 
 
 	array = one_first(p);
 	return array;
