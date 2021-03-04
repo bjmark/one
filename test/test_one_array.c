@@ -15,6 +15,7 @@ void test_one_array(void){
 	one_assert(one_find(p, "[]", "method") != NULL);
 	one_assert(one_find(p, "pop", "method") != NULL);
 	one_assert(one_find(p, "len", "method") != NULL);
+	one_assert(one_find(p, "each", "method") != NULL);
 }
 
 void test_one_array_new(void){
@@ -146,6 +147,41 @@ void test_one_array_len(void){
 	one_assert(one_call(p, "len", one_empty()).c_int == 1);
 }
 
+static one sum(one *self, one arg){
+	one *p = one_find_by_name(self, "@sum");
+	p->c_int += arg.one_p->c_int;
+	
+	return *self;
+}
+
+void test_one_array_each(void){
+	printf("test_one_array_each\n");
+
+	one *p = one_call(one_array(), "new", one_empty()).one_p;
+	one one1, one2, one3;
+	
+	one1.c_int = 1;
+	one2.c_int = 2;
+	one3.c_int = 3;
+
+	one_call(p, "<<", (one){.one_p = &one1});
+	one_call(p, "<<", (one){.one_p = &one2});
+	one_call(p, "<<", (one){.one_p = &one3});
+
+	one t1, t2;
+	t1.method = sum;
+
+	t2.name = one_atom("@sum");
+	t2.type = one_atom("int");
+	t2.c_int = 0;
+
+	one_join(&t1, &t2);
+
+	one_call(p, "each", t1);
+
+	one_assert(t2.c_int == 1 + 2 + 3);
+}
+
 int main(void){
 	printf("start testing...\n\n");
 	
@@ -162,6 +198,7 @@ int main(void){
 	one_test_fail(test_one_array_pop2);
 
 	one_test_success(test_one_array_len);
+	one_test_success(test_one_array_each);
 
 	printf("test end\n");
 	return 1;

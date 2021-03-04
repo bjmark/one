@@ -117,6 +117,18 @@ one one_array_len(one *self, one arg){
 	return (one){.c_int = len->c_int}; 
 }
 
+one one_array_each(one *self, one arg){
+	one *len = one_find_by_name(self, "@len");
+	
+	one one1;
+	for(int i = 0; i < len->c_int; i++){
+		one1 = one_call(self, "[]", (one){.c_int = i});
+		arg.method(&arg, one1);
+	}
+
+	return *self; 
+}
+
 one *one_array(void){
 	static one *array = NULL;
 
@@ -176,6 +188,13 @@ one *one_array(void){
 	p->name = one_atom("len");
 	p->type = one_atom("method");
 	p->method = one_array_len; 
+
+	one_join(p, one_new(1));
+	p = one_last(p);
+
+	p->name = one_atom("each");
+	p->type = one_atom("method");
+	p->method = one_array_each; 
 
 	array = one_first(p);
 	return array;
