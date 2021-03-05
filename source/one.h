@@ -42,6 +42,8 @@ one *one_detach(one *p);
 
 one *one_join(one *p1, one *p2);
 
+one *one_basic(void);
+
 one *one_string(void);
 
 one *one_array(void);
